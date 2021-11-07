@@ -1,4 +1,7 @@
+import os
 import re
+import pathlib
+import argparse
 from urllib.request import urlopen, Request
 
 
@@ -17,6 +20,10 @@ def get_filename(response):
 
 
 def main():
+    parser = argparse.ArgumentParser(add_help=True, description='Downloads file from site')
+    parser.add_argument('--download-path', type=pathlib.Path)
+    args = parser.parse_args()
+
     request = Request(
         url='...',
         headers={
@@ -25,9 +32,9 @@ def main():
         }
     )
     with urlopen(request) as response:
-        file_name = get_filename(response)
+        file_path = os.path.join(args.download_path if args.download_path is not None else '...', get_filename(response))
         file_content = response.read()
-        with open(file_name, 'wb') as file:
+        with open(file_path, 'wb') as file:
             file.write(file_content)
 
 
